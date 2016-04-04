@@ -135,19 +135,21 @@ RUN apk add --no-cache --virtual .phpize-deps \
     && pecl install memcache \
     && pecl install rar \
     && echo | pecl install uuid \
-    && docker-php-ext-configure xcache-$XCACHE_VERSION \
-        --enable-xcache \
-        --enable-xcache-constant \
-        --enable-xcache-optimizer \
-        --enable-xcache-coverager \
-        --enable-xcache-assembler \
-        --enable-xcache-disassembler \
-        --enable-xcache-encoder \
-        --enable-xcache-decoder \
+#    && docker-php-ext-configure xcache-$XCACHE_VERSION \
+#        --enable-xcache \
+#        --enable-xcache-constant \
+#        --enable-xcache-optimizer \
+#        --enable-xcache-coverager \
+#        --enable-xcache-assembler \
+#        --enable-xcache-disassembler \
+#        --enable-xcache-encoder \
+#        --enable-xcache-decoder \
     && docker-php-ext-enable geoip memcache rar uuid \
     && docker-php-ext-install phpredis-$PHPREDIS_VERSION \
 # xcache-$XCACHE_VERSION \
 # suhosin-$SUHOSIN_VERSION \
+    && rm -rf /usr/src \
+    && rm -rf /usr/local/src \
     && runDeps="$( \
         scanelf --needed --nobanner --recursive /usr/local \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
