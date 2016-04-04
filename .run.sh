@@ -1,5 +1,6 @@
 docker run -it --restart=always -d --name phpdir_phpdef-fpm-goha_1 \
     -p 9002:9000 \
+    -h phpdir1.$HOST \
     -e TZ=America/Los_Angeles \
     -e PARENT_HOST=$HOST \
     -v /etc/timezone:/etc/timezone:ro \

@@ -126,13 +126,11 @@ RUN apk add --no-cache --virtual .phpize-deps \
 	&& make -j4 \
 	&& make install \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
-	&& make clean
-
-RUN echo "stage3" \
+	&& make clean \
     && cd /usr/src/php/ext \
     && curl -q https://codeload.github.com/phpredis/phpredis/tar.gz/$PHPREDIS_VERSION | tar -xz \
-    && curl -q https://xcache.lighttpd.net/pub/Releases/$XCACHE_VERSION/xcache-$XCACHE_VERSION.tar.gz | tar -xz \
-    && curl -q https://download.suhosin.org/suhosin-$SUHOSIN_VERSION.tar.gz | tar -xz \
+#    && curl -q https://xcache.lighttpd.net/pub/Releases/$XCACHE_VERSION/xcache-$XCACHE_VERSION.tar.gz | tar -xz \
+#    && curl -q https://download.suhosin.org/suhosin-$SUHOSIN_VERSION.tar.gz | tar -xz \
     && pecl install geoip \
     && pecl install memcache \
     && pecl install rar \
@@ -157,8 +155,8 @@ RUN echo "stage3" \
             | xargs -r apk info --installed \
             | sort -u \
         )" \
-    && apk add --no-cache --virtual .php-rundeps $runDeps
-#    && apk del --no-cache .phpize-deps
+    && apk add --no-cache --virtual .php-rundeps $runDeps \
+    && apk del --no-cache .phpize-deps
 
 WORKDIR /var/www/html
 
