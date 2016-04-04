@@ -1,9 +1,9 @@
 phpdef-fpm-goha:
-    build: .
+    image: trurlmcbyte/phpdir:latest
     environment:
         - TZ=Asia/Jerusalem
     ports:
-        - 9003:9000
+        - 9002:9000
     volumes:
         - /etc/timezone:/etc/timezone:ro
         - /usr/local/src/site:/usr/local/src/site
@@ -11,3 +11,4 @@ phpdef-fpm-goha:
         - /usr/local/src/themes:/usr/local/src/themes
         - /srv/nfs/share/vol2/www/imageshare/sites/brands:/srv/nfs/share/vol2/www/imageshare/sites/brands
         - /srv/www/htdocs:/srv/www/htdocs
+        - /srv/nfs/share:/srv/nfs/share

@@ -20,3 +20,4 @@ for f in 01 02 04 05; do
 #    ssh -tA root@front$f docker images
     ssh -tA root@front$f docker ps -a
 done
+#docker exec -ti phpdir_phpdef-fpm-goha_1 sh -c 'echo "zend_extension=opcache.so" > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini'

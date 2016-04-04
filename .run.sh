@@ -1,3 +1,4 @@
+#!/bin/sh
 docker run -it --restart=always -d --name phpdir_phpdef-fpm-goha_1 \
     -p 9002:9000 \
     -h phpdir1.$HOST \
@@ -10,4 +11,4 @@ docker run -it --restart=always -d --name phpdir_phpdef-fpm-goha_1 \
     -v /srv/nfs/share:/srv/nfs/share \
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
-    phpdir_phpdef-fpm-goha
+    trurlmcbyte/phpdir:5.6
