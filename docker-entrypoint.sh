@@ -6,7 +6,7 @@ write_configs() {
 
     if [ -d /usr/local/etc/php-fpm.d ]; then \
         # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
-        sed 's!=NONE/!=!g' /usr/local/etc/php-fpm.conf.default
+        sed 's!=NONE/!=!g' /usr/local/etc/php-fpm.conf.default > /usr/local/etc/php-fpm.conf
         cp /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/www.conf
     else \
         # PHP 5.x don't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency

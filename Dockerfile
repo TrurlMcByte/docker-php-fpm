@@ -29,6 +29,7 @@ COPY docker-php-ext-* /usr/local/bin/
 
 
 RUN apk add --no-cache --virtual .phpize-deps \
+        git \
         autoconf \
         libtool \
         automake \
@@ -57,6 +58,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
 	libxml2-dev \
 	openssl-dev \
 	sqlite-dev \
+        libmemcached-dev \
   && set -x \
     && addgroup -g 82 -S www-data \
     && adduser -u 82 -D -S -G www-data www-data \
@@ -84,7 +86,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
 	&& mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
 	&& rm "$PHP_FILENAME" \
         && cd /usr/src/php \
-	&& ./configure --help \
+#	&& ./configure --help \
 	&& ./configure \
 		--with-config-file-path="$PHP_INI_DIR" \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
@@ -128,12 +130,14 @@ RUN apk add --no-cache --virtual .phpize-deps \
 	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
 	&& make clean \
     && cd /usr/src/php/ext \
-    && curl -q https://codeload.github.com/phpredis/phpredis/tar.gz/$PHPREDIS_VERSION | tar -xz \
+     && git clone -b php7 https://github.com/phpredis/phpredis.git \
+     && docker-php-ext-install phpredis \
+     && git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git \
+     && docker-php-ext-configure php-memcached --disable-memcached-sasl \
 #    && curl -q https://xcache.lighttpd.net/pub/Releases/$XCACHE_VERSION/xcache-$XCACHE_VERSION.tar.gz | tar -xz \
 #    && curl -q https://download.suhosin.org/suhosin-$SUHOSIN_VERSION.tar.gz | tar -xz \
-    && pecl install geoip \
-    && pecl install memcache \
-    && pecl install rar \
+#    && pecl install geoip \
+#    && pecl install rar \
     && echo | pecl install uuid \
 #    && docker-php-ext-configure xcache-$XCACHE_VERSION \
 #        --enable-xcache \
@@ -144,11 +148,10 @@ RUN apk add --no-cache --virtual .phpize-deps \
 #        --enable-xcache-disassembler \
 #        --enable-xcache-encoder \
 #        --enable-xcache-decoder \
-    && docker-php-ext-enable geoip \
-    && docker-php-ext-enable rar \
-    && docker-php-ext-enable memcache \
+#    && docker-php-ext-enable geoip \
+#    && docker-php-ext-enable rar \
+#    && docker-php-ext-enable memcache \
     && docker-php-ext-enable uuid \
-    && docker-php-ext-install phpredis-$PHPREDIS_VERSION \
 # xcache-$XCACHE_VERSION \
 # suhosin-$SUHOSIN_VERSION \
     && rm -rf /usr/src/php \
@@ -168,6 +171,6 @@ WORKDIR /var/www/html
 EXPOSE 9000
 
 COPY php.ini browscap.ini /usr/local/etc/php/
-ADD docker-entrypoint.sh /entrypoint.sh
+COPY docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
