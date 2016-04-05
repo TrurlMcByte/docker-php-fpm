@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 CON_NAME=phpdir_phpdef-fpm-goha_1
-IMG_NAME=trurlmcbyte/phpdir:5.6.20
+IMG_NAME=trurlmcbyte/phpdir:5.5.34
 
-docker build -t trurlmcbyte/phpdir:5.6.20 .
+docker build -t $IMG_NAME . || exit
 
 docker stop $CON_NAME
 docker rm $CON_NAME
