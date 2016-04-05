@@ -7,7 +7,7 @@ docker build -t $IMG_NAME . ||  exit
 
 docker stop $CON_NAME
 docker rm $CON_NAME
-docker run -it --name $CON_NAME \
+docker run -d --name $CON_NAME \
     --log-driver=syslog \
     --log-opt syslog-address=udp://192.168.1.11:514 \
     --log-opt syslog-facility=daemon \
