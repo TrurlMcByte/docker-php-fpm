@@ -19,10 +19,10 @@ ENV TIDY_VERSION=5.1.25 \
     XCACHE_VERSION=3.2.0 \
     SUHOSIN_VERSION=0.9.38 \
     PHP_INI_DIR=/usr/local/etc/php \
-    GPG_KEYS="0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3" \
-    PHP_VERSION=5.6.20 \
-    PHP_FILENAME=php-5.6.20.tar.xz \
-    PHP_SHA256=2b87d40213361112af49157a435e0d4cdfd334c9b7c731c8b844932b1f444e7a \
+    GPG_KEYS="1A4E8B7277C42E53DBA9C7B9BCAA30EA9C0D5763" \
+    PHP_VERSION=7.0.5 \
+    PHP_FILENAME=php-7.0.5.tar.xz \
+    PHP_SHA256=c41f1a03c24119c0dd9b741cdb67880486e64349fc33527767f6dc28d3803abb \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 COPY docker-php-ext-* /usr/local/bin/
@@ -144,7 +144,10 @@ RUN apk add --no-cache --virtual .phpize-deps \
 #        --enable-xcache-disassembler \
 #        --enable-xcache-encoder \
 #        --enable-xcache-decoder \
-    && docker-php-ext-enable geoip memcache rar uuid \
+    && docker-php-ext-enable geoip \
+    && docker-php-ext-enable rar \
+    && docker-php-ext-enable memcache \
+    && docker-php-ext-enable uuid \
     && docker-php-ext-install phpredis-$PHPREDIS_VERSION \
 # xcache-$XCACHE_VERSION \
 # suhosin-$SUHOSIN_VERSION \
