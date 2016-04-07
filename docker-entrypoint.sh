@@ -39,6 +39,9 @@ daemonize = no
 listen = [::]:9000
 EOF
 
+curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /tmp/GeoIP.dat.gz \
+ && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/
+
 touch /usr/local/etc/php.configured
 }
 
