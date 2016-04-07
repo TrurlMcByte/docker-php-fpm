@@ -2,54 +2,39 @@
 set -e
 
 write_configs() {
-    echo "writing configs.." >&2
 
-    if [ -d /usr/local/etc/php-fpm.d ]; then \
-        # for some reason, upstream's php-fpm.conf.default has "include=NONE/etc/php-fpm.d/*.conf"
-        sed 's!=NONE/!=!g' /usr/local/etc/php-fpm.conf.default > /usr/local/etc/php-fpm.conf
-        cp /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/www.conf
-    else \
-        # PHP 5.x don't use "include=" by default, so we'll create our own simple config that mimics PHP 7+ for consistency
-        mkdir /usr/local/etc/php-fpm.d
-        cp /usr/local/etc/php-fpm.conf.default /usr/local/etc/php-fpm.d/www.conf
-        cat > /usr/local/etc/php-fpm.conf << EOF
-[global]
-include=etc/php-fpm.d/*.conf
-EOF
-    fi
+    mkdir -p /data/log
 
-    cat > /usr/local/etc/php-fpm.d/docker.conf <<EOF
-[global]
-error_log = ${ERRORLOG_DESTINATION:-/proc/self/fd/2}
+    test -d /usr/local/etc/php-fpm.d || mkdir -p /usr/local/etc/php-fpm.d
+    test -f /usr/local/etc/php-fpm.conf.default && sed 's!=NONE/!=!g' /usr/local/etc/php-fpm.conf.default > /usr/local/etc/php-fpm.d/www.conf
 
-[www]
-access.log = ${ACCESSLOG_DESTINATION:-/proc/self/fd/2}
+    curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /tmp/GeoIP.dat.gz \
+         && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/
 
-clear_env = no
-
-; Ensure worker stdout and stderr are sent to the main error log.
-catch_workers_output = yes
-EOF
-
-    cat > /usr/local/etc/php-fpm.d/zz-docker.conf <<EOF
-[global]
-daemonize = no
-
-[www]
-listen = [::]:9000
-EOF
-
-curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /tmp/GeoIP.dat.gz \
- && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/
-
-touch /usr/local/etc/php.configured
+    touch /usr/local/etc/php.configured
 }
 
 test -e /usr/local/etc/php.configured || write_configs
 test "${OPCACHE_ENABLE}" && echo "zend_extension=opcache.so" > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 test "${OPCACHE_DISABLE}" && rm /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
+cp -f /usr/local/etc/php-fpm.d/zz-docker_global.conf.default /usr/local/etc/php-fpm.d/zz-docker_global.conf
+
+test "${FPMGOPTS}" && { \
+    echo \
+    && echo "${FPMGOPTS}"
+     } >> /usr/local/etc/php-fpm.d/zz-docker_global.conf
+
+cp -f /usr/local/etc/php-fpm.d/zz-docker_www.conf.default /usr/local/etc/php-fpm.d/zz-docker_www.conf
+
+test "${FPMOPTS}" && { \
+    echo \
+    && echo "${FPMOPTS}"
+     } >> /usr/local/etc/php-fpm.d/zz-docker_www.conf
+
+
 if [ $# -eq 0 ]; then
+cat /usr/local/etc/php-fpm.d/zz-docker_www.conf >&2
     /usr/local/sbin/php-fpm
 fi
 

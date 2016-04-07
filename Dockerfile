@@ -164,7 +164,7 @@ WORKDIR /var/www/html
 
 EXPOSE 9000
 
-COPY php.ini browscap.ini /usr/local/etc/php/
+ADD etc /usr/local/etc/
 ADD docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
