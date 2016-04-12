@@ -1,3 +1,5 @@
 *.tar*
 11*
 *.log
+php/
+www.conf

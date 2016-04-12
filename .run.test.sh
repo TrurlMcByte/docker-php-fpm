@@ -17,6 +17,11 @@ docker run -d --name $CON_NAME \
     -e TZ=America/Los_Angeles \
     -e PARENT_HOST=$HOST \
     -e OPCACHE_ENABLE=yes \
+    -e WORK_UID=`id -u wwwrun` \
+    -e WORK_GID=`id -g wwwrun` \
+    -e MOD_MEMCACHE='
+extension=memcache.so
+' \
     -e FPMGOPTS='' \
     -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
@@ -29,6 +34,8 @@ docker run -d --name $CON_NAME \
     -v /home/pubgoha:/home/pubgoha:ro \
     $IMG_NAME
 
+#    -e WORK_UID=`id -u wwwrun` \
+#    -e WORK_GID=`id -g wwwrun` \
 
 #docker export -o $CON_NAME.tar $CON_NAME
 

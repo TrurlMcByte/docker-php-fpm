@@ -32,6 +32,19 @@ test "${FPMOPTS}" && { \
     && echo "${FPMOPTS}"
      } >> /usr/local/etc/php-fpm.d/zz-docker_www.conf
 
+export ORIGPASSWD=$(cat /etc/passwd | grep www-data)
+export ORIG_UID=$(echo $ORIGPASSWD | cut -f3 -d:)
+export ORIG_GID=$(echo $ORIGPASSWD | cut -f4 -d:)
+export WORK_UID=${WORK_UID:=$ORIG_UID}
+export WORK_GID=${WORK_GID:=$ORIG_GID}
+ORIG_HOME=$(echo $ORIGPASSWD | cut -f6 -d:)
+
+sed -i -e "s/:$ORIG_UID:$ORIG_GID:/:$WORK_UID:$WORK_GID:/" /etc/passwd
+sed -i -e "s/www-data:x:$ORIG_GID:/www-data:x:$WORK_GID:/" /etc/group
+
+chown -R ${WORK_UID}:${WORK_GID} ${ORIG_HOME}
+
+test "${MOD_MEMCACHE}" && echo "${MOD_MEMCACHE}" > /usr/local/etc/php/conf.d/docker-php-ext-memcache.ini
 
 if [ $# -eq 0 ]; then
 cat /usr/local/etc/php-fpm.d/zz-docker_www.conf >&2
