@@ -1,7 +1,9 @@
 #!/bin/sh
 #
 CON_NAME=phpdir_phpdef-fpm-goha_1
-IMG_NAME=trurlmcbyte/phpdir:5.6.20
+IMG_VER=5.6.20
+IMG_BASE_NAME="trurlmcbyte/phpdir"
+IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
 
 docker build -t $IMG_NAME .
 
@@ -42,8 +44,11 @@ extension=memcache.so
 sleep 1s
 
 curl -s http://home/test.php | grep -q 'Zend OPcache' \
- && docker tag $IMG_NAME trurlmcbyte/phpdir:5.6 \
- && docker tag $IMG_NAME trurlmcbyte/phpdir:5 \
- && docker tag $IMG_NAME trurlmcbyte/phpdir:latest \
- && docker push trurlmcbyte/phpdir
+ && docker tag $IMG_NAME "$IMG_BASE_NAME:5.6" \
+ && docker tag $IMG_NAME "$IMG_BASE_NAME:5" \
+ && docker tag $IMG_NAME "$IMG_BASE_NAME:latest" \
+ && docker push $IMG_BASE_NAME
 
+echo -en "\007"
+sleep 1s
+echo -en "\007"
