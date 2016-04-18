@@ -5,11 +5,11 @@ IMG_VER=5.6.20
 IMG_BASE_NAME="trurlmcbyte/phpdir"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
 
-docker build -t $IMG_NAME .
+#docker build -t $IMG_NAME .
 
 docker stop $CON_NAME
 docker rm $CON_NAME
-docker run -d --name $CON_NAME \
+docker run -d  --restart=always  --name $CON_NAME \
     --log-driver=syslog \
     --log-opt syslog-address=udp://192.168.1.11:514 \
     --log-opt syslog-facility=daemon \
@@ -34,6 +34,7 @@ extension=memcache.so
     -v /srv/nfs/share:/srv/nfs/share \
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
+    -v /usr/share/zabbix:/usr/share/zabbix:ro \
     $IMG_NAME
 
 #    -e WORK_UID=`id -u wwwrun` \
