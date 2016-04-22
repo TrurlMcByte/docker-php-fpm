@@ -42,7 +42,7 @@ extension=memcache.so
 
 #docker export -o $CON_NAME.tar $CON_NAME
 
-sleep 1s
+sleep 3s
 
 curl -s http://home/test.php | grep -q 'Zend OPcache' \
  && docker tag $IMG_NAME "$IMG_BASE_NAME:5.6" \
