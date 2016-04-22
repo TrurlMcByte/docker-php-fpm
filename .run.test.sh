@@ -5,7 +5,8 @@ IMG_VER=5.6.20
 IMG_BASE_NAME="trurlmcbyte/phpdir"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
 
-#docker build -t $IMG_NAME .
+test -f ./build.log && mv -b ./build.log ./build.log.old
+docker build -t $IMG_NAME . &> ./build.log
 
 docker stop $CON_NAME
 docker rm $CON_NAME
