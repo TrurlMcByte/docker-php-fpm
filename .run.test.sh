@@ -25,6 +25,7 @@ docker run -d  --restart=always  --name $CON_NAME \
     -e MOD_MEMCACHE='
 extension=memcache.so
 ' \
+    -e MOD_XDEBUG="yes" \
     -e FPMGOPTS='' \
     -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
