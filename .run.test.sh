@@ -4,54 +4,70 @@ CON_NAME=phpdir_phpdef-fpm-goha_1
 IMG_VER=5.6.20
 IMG_BASE_NAME="trurlmcbyte/phpdir"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
+SUBTAGS="latest 5.6 5"
 
-test -f ./build.log && mv -b ./build.log ./build.log.old
-docker build -t $IMG_NAME . &> ./build.log
+IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~/72\.51/) { print a[2]; exit; } }'`
 
-docker stop $CON_NAME
-docker rm $CON_NAME
+if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
+    set -eo pipefail
+    test -f ./build.log && mv -fb ./build.log ./build.log.old
+    docker build --pull -t $IMG_NAME . | tee ./build.log
+fi
+
+  docker stop -t 2 $CON_NAME
+  docker rm $CON_NAME
+
+#    -p 9002:9000 \
+#    -l port.9000=php-fpm \
+#    --net=docker-home-net \
+#    --net-alias=php-fpm \
+
 docker run -d  --restart=always  --name $CON_NAME \
     --log-driver=syslog \
     --log-opt syslog-address=udp://192.168.1.11:514 \
     --log-opt syslog-facility=daemon \
     --log-opt tag="$CON_NAME" \
-    -p 9002:9000 \
-    -h phpdir1.$HOST \
+    --net=docker-home-net \
+    --net-alias=php-fpm \
     -e TZ=America/Los_Angeles \
-    -e PARENT_HOST=$HOST \
-    -e OPCACHE_ENABLE=yes \
+    -e ENV=home \
     -e WORK_UID=`id -u wwwrun` \
     -e WORK_GID=`id -g wwwrun` \
-    -e MOD_MEMCACHE='
-extension=memcache.so
-' \
-    -e MOD_XDEBUG="yes" \
+    -e MOD_MEMCACHE='yes' \
+    -e MOD_XDEBUG='yes' \
+    -e MOD_XCACHE='yes' \
     -e FPMGOPTS='' \
     -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
+    -v /etc/ssl/phpki-store:/etc/ssl/phpki-store \
     -v /usr/local/src/site:/usr/local/src/site:ro \
     -v /usr/local/src/app:/usr/local/src/app:ro \
+    -v /usr/local/src/app:/usr/local/src/trumedia:ro \
     -v /usr/local/src/themes:/usr/local/src/themes:ro \
-    -v /srv/www/htdocs:/srv/www/htdocs:ro \
+    -v /srv/www/htdocs:/srv/www/htdocs:rw \
     -v /srv/nfs/share:/srv/nfs/share \
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
     -v /usr/share/zabbix:/usr/share/zabbix:ro \
     $IMG_NAME
 
+#    -e OPCACHE_ENABLE=yes \
 #    -e WORK_UID=`id -u wwwrun` \
 #    -e WORK_GID=`id -g wwwrun` \
 
-#docker export -o $CON_NAME.tar $CON_NAME
+docker export -o $CON_NAME.tar $CON_NAME
 
-sleep 3s
+sleep 7s
 
-curl -s http://home/test.php | grep -q 'Zend OPcache' \
- && docker tag $IMG_NAME "$IMG_BASE_NAME:5.6" \
- && docker tag $IMG_NAME "$IMG_BASE_NAME:5" \
- && docker tag $IMG_NAME "$IMG_BASE_NAME:latest" \
- && docker push $IMG_BASE_NAME
+if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
+  echo "Build $IMG_NAME is OK"
+  test "${IMG_BASE_NAME%/*}" = "trurlmcbyte" && \
+  for TAG in $SUBTAGS; do
+    docker tag $IMG_NAME "$IMG_BASE_NAME:$TAG"
+    docker push "$IMG_BASE_NAME:$TAG"
+  done
+fi
+
 
 echo -en "\007"
-sleep 1s
-echo -en "\007"
+echo -en "\007" > /dev/console

@@ -1,19 +1,27 @@
 #!/bin/sh
-CON_NAME=phpdir_phpdef-fpm-goha_1
+
+#for i in 1 2 3 4; do
+
+
+CON_NAME=phpdir5.6-fpm-goha
 IMG_NAME=trurlmcbyte/phpdir:5.6
 BINDIP=`getent hosts $HOST | awk '/10\.9\.8\./ {print $1; exit;}'`
 
+#docker stop -t 4 $CON_NAME
+#docker rm -f $CON_NAME
+#     --name $CON_NAME \
+#-H 10.9.8.12:3375
 
-docker run -it --restart=always -d --name $CON_NAME \
+docker  run -it --restart=always -d \
+    --name phpdir_1 \
     --log-driver=syslog \
     --log-opt syslog-address=udp://10.9.8.50:514 \
     --log-opt syslog-facility=daemon \
     --log-opt tag="$CON_NAME" \
     -p 9002:9000 \
-    -h phpdir1.$HOST \
+    -l port.9000=php-fpm \
+    -e ENV=production \
     -e TZ=America/Los_Angeles \
-    -e PARENT_HOST=$HOST \
-    -e OPCACHE_ENABLE=yes \
     -e WORK_UID=`id -u wwwrun` \
     -e WORK_GID=`id -g wwwrun` \
     -e MOD_MEMCACHE='
@@ -31,6 +39,31 @@ memcache.maxratio=0
 session.save_handler = memcache
 session.save_path = "tcp://10.9.8.8:11211,tcp://10.9.8.7:11211"
 ' \
+    -e MOD_XCACHE='
+[xcache.admin]
+xcache.admin.enable_auth = On
+xcache.admin.user = "mOo"
+xcache.admin.pass = "a02ae907dce951156a1a5bd67ecdac78"
+[xcache]
+xcache.shm_scheme =        "mmap"
+xcache.size  =               256M
+xcache.count =                 2
+xcache.slots =                4K
+xcache.ttl   =                 88400
+xcache.gc_interval =           910
+xcache.var_size  =            8M
+xcache.var_count =             1
+xcache.var_ttl   =             604800
+xcache.var_gc_interval =     300
+xcache.test =                Off
+xcache.readonly_protection = Off
+xcache.mmap_path =    "/tmp/xcache"
+xcache.cacher =               On
+xcache.stat   =               On
+xcache.optimizer =            On
+[xcache.coverager]
+xcache.coverager =          Off
+' \
     -e FPMOPTS='
 pm.status_path = /fpm-docker-status
 ping.path = /fpm-docker-ping
@@ -45,3 +78,5 @@ request_terminate_timeout = 30s
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
     $IMG_NAME
+
+#done
