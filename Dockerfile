@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:latest
 
 # base libs
 RUN apk add --no-cache \
@@ -12,7 +12,8 @@ RUN apk add --no-cache \
         icu-libs \
         libmcrypt \
         libuuid \
-        curl
+        curl \
+        xz
 
 ENV TIDY_VERSION=5.1.25 \
     PHPREDIS_VERSION=2.2.7 \
