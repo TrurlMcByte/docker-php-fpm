@@ -1,18 +1,18 @@
 #!/bin/sh
 #
 CON_NAME=phpdir_phpdef-fpm-goha_1
-IMG_VER=5.6.20
+IMG_VER=5.6.23
 IMG_BASE_NAME="trurlmcbyte/phpdir"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
 SUBTAGS="latest 5.6 5"
 
 IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~/72\.51/) { print a[2]; exit; } }'`
 
-if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
-    set -eo pipefail
-    test -f ./build.log && mv -fb ./build.log ./build.log.old
-    docker build --pull -t $IMG_NAME . | tee ./build.log
-fi
+#if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
+#    set -eo pipefail
+#    test -f ./build.log && mv -fb ./build.log ./build.log.old
+#    docker build --pull -t $IMG_NAME . | tee ./build.log
+#fi
 
   docker stop -t 2 $CON_NAME
   docker rm $CON_NAME
@@ -44,7 +44,7 @@ docker run -d  --restart=always  --name $CON_NAME \
     -v /usr/local/src/app:/usr/local/src/app:ro \
     -v /usr/local/src/app:/usr/local/src/trumedia:ro \
     -v /usr/local/src/themes:/usr/local/src/themes:ro \
-    -v /srv/www/htdocs:/srv/www/htdocs:rw \
+    -v /srv/www/htdocs:/srv/www/htdocs:ro \
     -v /srv/nfs/share:/srv/nfs/share \
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
@@ -55,9 +55,17 @@ docker run -d  --restart=always  --name $CON_NAME \
 #    -e WORK_UID=`id -u wwwrun` \
 #    -e WORK_GID=`id -g wwwrun` \
 
-docker export -o $CON_NAME.tar $CON_NAME
+#docker export -o $CON_NAME.tar $CON_NAME
 
-sleep 7s
+sleep 3s
+
+echo -en "\007"
+echo -en "\007" > /dev/console
+
+echo "Done"
+
+read 
+set -x
 
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
   echo "Build $IMG_NAME is OK"
@@ -69,5 +77,3 @@ if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
 fi
 
 
-echo -en "\007"
-echo -en "\007" > /dev/console

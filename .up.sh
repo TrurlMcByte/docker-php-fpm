@@ -3,8 +3,8 @@ scp -C  .run.sh front03:/srv/nfs/share/vol5/docker/php-goha/
 #scp -C  deploy front03:/srv/nfs/share/vol5/docker/php-goha/
 
 #for f in 01 02 04 05; do
-#for f in 02 05 ; do
-for f in 02 ; do
+for f in 05 ; do
+#for f in 02 ; do
 #    ssh -tA root@front$f ls -l /srv/nfs/share/vol5/docker/php-goha/
 #    ssh -tA root@front$f docker images
 #    ssh -tA root@front$f docker ps -a
