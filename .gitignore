@@ -1,3 +1,4 @@
 *.tar*
 11*
 *.log
+*.log.old*
