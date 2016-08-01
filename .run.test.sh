@@ -9,13 +9,13 @@ SUBTAGS="latest 5.6 5"
 
 IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~/72\.51/) { print a[2]; exit; } }'`
 
-#if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
-#    set -eo pipefail
-#    test -f ./build.log && mv -fb ./build.log ./build.log.old
-#    docker build --pull -t $IMG_NAME . | tee ./build.log
-#else
+if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
+    set -eo pipefail
+    test -f ./build.log && mv -fb ./build.log ./build.log.old
+    docker build --pull -t $IMG_NAME . | tee ./build.log
+else
     docker pull $IMG_NAME
-#fi
+fi
 
   docker stop -t 2 $CON_NAME
   docker rm $CON_NAME

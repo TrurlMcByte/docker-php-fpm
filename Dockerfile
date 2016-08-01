@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:latest
 
 # base libs
 RUN apk add --no-cache \
@@ -20,7 +20,7 @@ RUN apk add --no-cache \
         libxml2 \
         libxslt \
         postgresql-client \
-        zlib \
+        zlib
 
 ENV TIDY_VERSION=5.1.25 \
     PHPREDIS_VERSION=2.2.7 \
