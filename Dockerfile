@@ -20,6 +20,7 @@ RUN apk add --no-cache \
         libxml2 \
         libxslt \
         postgresql-client \
+        xz \
         zlib
 
 ENV TIDY_VERSION=5.1.25 \
@@ -88,65 +89,65 @@ RUN apk add --no-cache --virtual .build-deps \
     && ln -s tidybuffio.h ../../../../include/buffio.h \
     && cd /usr/local/src \
     && rm -rf /usr/local/src/tidy-html5-$TIDY_VERSION \
-  && set -xe \
-	&& curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
-	&& echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
-	&& curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done \
-	&& gpg --batch --verify "$PHP_FILENAME.asc" "$PHP_FILENAME" \
-	&& rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
-	&& mkdir -p /usr/src \
-	&& tar -Jxf "$PHP_FILENAME" -C /usr/src \
-	&& mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
-	&& rm "$PHP_FILENAME" \
-        && cd /usr/src/php \
-	&& ./configure --help \
-	&& ./configure \
-		--with-config-file-path="$PHP_INI_DIR" \
-		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-		$PHP_EXTRA_CONFIGURE_ARGS \
-		--disable-cgi \
+    && set -xe \
+    && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
+    && echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
+    && curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && for key in $GPG_KEYS; do \
+        gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+    done \
+    && gpg --batch --verify "$PHP_FILENAME.asc" "$PHP_FILENAME" \
+    && rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
+    && mkdir -p /usr/src \
+    && tar -Jxf "$PHP_FILENAME" -C /usr/src \
+    && mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
+    && rm "$PHP_FILENAME" \
+    && cd /usr/src/php \
+    && ./configure --help \
+    && ./configure \
+        --with-config-file-path="$PHP_INI_DIR" \
+        --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+        $PHP_EXTRA_CONFIGURE_ARGS \
+        --disable-cgi \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-		--enable-mysqlnd \
+        --enable-mysqlnd \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
-                --enable-bcmath \
-                --enable-calendar \
-                --enable-exif \
-                --enable-ftp \
-                --enable-intl \
-                --enable-mbstring \
-                --enable-opcache \
-                --enable-shmop \
-                --enable-sockets \
-                --enable-sysvmsg \
-                --enable-sysvsem \
-                --enable-sysvshm \
-                --enable-wddx \
-                --enable-zip \
-                --with-curl \
-                --with-freetype-dir=/usr/include/ \
-                --with-gd \
-                --with-gettext \
-                --with-imap \
-                --with-imap-ssl \
-                --with-jpeg-dir=/usr/include/ \
-                --with-libedit \
-                --with-mcrypt \
-                --with-mysql \
-                --with-mysqli \
-                --with-openssl \
-                --with-pdo-mysql \
-                --with-pdo-pgsql \
-                --with-pgsql \
-                --with-png-dir=/usr/include/ \
-                --with-tidy \
-                --with-xsl \
-                --with-zlib \
-	&& make -j4 \
-	&& make install \
+        --enable-bcmath \
+        --enable-calendar \
+        --enable-exif \
+        --enable-ftp \
+        --enable-intl \
+        --enable-mbstring \
+        --enable-opcache \
+        --enable-shmop \
+        --enable-sockets \
+        --enable-sysvmsg \
+        --enable-sysvsem \
+        --enable-sysvshm \
+        --enable-wddx \
+        --enable-zip \
+        --with-curl \
+        --with-freetype-dir=/usr/include/ \
+        --with-gd \
+        --with-gettext \
+        --with-imap \
+        --with-imap-ssl \
+        --with-jpeg-dir=/usr/include/ \
+        --with-libedit \
+        --with-mcrypt \
+        --with-mysql \
+        --with-mysqli \
+        --with-openssl \
+        --with-pdo-mysql \
+        --with-pdo-pgsql \
+        --with-pgsql \
+        --with-png-dir=/usr/include/ \
+        --with-tidy \
+        --with-xsl \
+        --with-zlib \
+    && make -j4 \
+    && make install \
     && { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     && cd /usr/src/php/ext \
     && curl -q https://codeload.github.com/phpredis/phpredis/tar.gz/$PHPREDIS_VERSION | tar -xz \
