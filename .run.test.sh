@@ -1,8 +1,9 @@
 #!/bin/sh
 #
 CON_NAME=phpdir_phpdef-fpm-goha_1
-IMG_VER=5.6.23
-IMG_BASE_NAME="trurlmcbyte/phpdir"
+BUILD_MARK='PHP_VERSION'
+IMG_VER=`grep "${BUILD_MARK}=" Dockerfile | cut -d '=' -f 2 | cut -d ' ' -f 1`
+IMG_BASE_NAME="trurlmcbyte/php-fpm"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
 SUBTAGS="latest 5.6 5"
 
@@ -12,6 +13,8 @@ IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~
 #    set -eo pipefail
 #    test -f ./build.log && mv -fb ./build.log ./build.log.old
 #    docker build --pull -t $IMG_NAME . | tee ./build.log
+#else
+    docker pull $IMG_NAME
 #fi
 
   docker stop -t 2 $CON_NAME
