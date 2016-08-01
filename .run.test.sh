@@ -73,6 +73,7 @@ set -x
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
   echo "Build $IMG_NAME is OK"
   test "${IMG_BASE_NAME%/*}" = "trurlmcbyte" && \
+  docker push "$IMG_NAME"
   for TAG in $SUBTAGS; do
     docker tag $IMG_NAME "$IMG_BASE_NAME:$TAG"
     docker push "$IMG_BASE_NAME:$TAG"
