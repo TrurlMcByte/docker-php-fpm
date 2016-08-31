@@ -30,9 +30,9 @@ ENV TIDY_VERSION=5.1.25 \
     SUHOSIN_VERSION=0.9.38 \
     PHP_INI_DIR=/usr/local/etc/php \
     GPG_KEYS="0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3" \
-    PHP_VERSION=5.6.24 \
-    PHP_FILENAME=php-5.6.24.tar.xz \
-    PHP_SHA256=ed7c38c6dac539ade62e08118258f4dac0c49beca04d8603bee4e0ea6ca8250b \
+    PHP_VERSION=5.6.25 \
+    PHP_FILENAME=php-5.6.25.tar.xz \
+    PHP_SHA256=7535cd6e20040ccec4594cc386c6f15c3f2c88f24163294a31068cf7dfe7f644 \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 COPY docker-php-ext-* /usr/local/bin/
