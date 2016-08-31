@@ -20,10 +20,10 @@ ENV TIDY_VERSION=5.1.25 \
     XCACHE_VERSION=3.2.0 \
     SUHOSIN_VERSION=0.9.38 \
     PHP_INI_DIR=/usr/local/etc/php \
-    GPG_KEYS="1A4E8B7277C42E53DBA9C7B9BCAA30EA9C0D5763" \
-    PHP_VERSION=7.0.9 \
-    PHP_FILENAME=php-7.0.9.tar.xz \
-    PHP_SHA256=970c322ba3e472cb0264b8ba9d4d92e87918da5d0cca53c4aba2a70545b8626d \
+    GPG_KEYS="1A4E8B7277C42E53DBA9C7B9BCAA30EA9C0D5763 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3" \
+    PHP_VERSION=7.0.10 \
+    PHP_FILENAME=php-7.0.10.tar.xz \
+    PHP_SHA256=348476ff7ba8d95a1e28e1059430c10470c5f8110f6d9133d30153dda4cdf56a \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 COPY docker-php-ext-* /usr/local/bin/
@@ -53,12 +53,12 @@ RUN apk add --no-cache --virtual .phpize-deps \
         bzip2-dev \
         util-linux-dev \
         cmake \
-	curl-dev \
-	gnupg \
-	libedit-dev \
-	libxml2-dev \
-	openssl-dev \
-	sqlite-dev \
+    curl-dev \
+    gnupg \
+    libedit-dev \
+    libxml2-dev \
+    openssl-dev \
+    sqlite-dev \
         libmemcached-dev \
   && set -x \
     && addgroup -g 82 -S www-data \
@@ -73,35 +73,35 @@ RUN apk add --no-cache --virtual .phpize-deps \
     && cd /usr/local/src \
     && rm -rf /usr/local/src/tidy-html5-$TIDY_VERSION \
   && set -xe \
-	&& curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
-	&& echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
-	&& curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& for key in $GPG_KEYS; do \
-		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done \
-	&& gpg --batch --verify "$PHP_FILENAME.asc" "$PHP_FILENAME" \
-	&& rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
-	&& mkdir -p /usr/src \
-	&& tar -Jxf "$PHP_FILENAME" -C /usr/src \
-	&& mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
-	&& rm "$PHP_FILENAME" \
+    && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
+    && echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
+    && curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && for key in $GPG_KEYS; do \
+        gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+    done \
+    && gpg --batch --verify "$PHP_FILENAME.asc" "$PHP_FILENAME" \
+    && rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
+    && mkdir -p /usr/src \
+    && tar -Jxf "$PHP_FILENAME" -C /usr/src \
+    && mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
+    && rm "$PHP_FILENAME" \
         && cd /usr/src/php \
-#	&& ./configure --help \
-	&& ./configure \
-		--with-config-file-path="$PHP_INI_DIR" \
-		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
-		$PHP_EXTRA_CONFIGURE_ARGS \
-		--disable-cgi \
+#    && ./configure --help \
+    && ./configure \
+        --with-config-file-path="$PHP_INI_DIR" \
+        --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+        $PHP_EXTRA_CONFIGURE_ARGS \
+        --disable-cgi \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions are (since it's a plugin for several extensions, not an extension in itself)
-		--enable-mysqlnd \
+        --enable-mysqlnd \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly (see https://github.com/docker-library/php/issues/195)
-		--enable-mbstring \
+        --enable-mbstring \
                 --enable-exif \
-		--with-curl \
-		--with-libedit \
-		--with-openssl \
-		--with-zlib \
+        --with-curl \
+        --with-libedit \
+        --with-openssl \
+        --with-zlib \
                 --enable-calendar \
                 --enable-ftp \
                 --with-tidy \
@@ -126,11 +126,11 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 --enable-shmop \
                 --enable-sockets \
                 --enable-bcmath \
-	&& make -j4 \
-	&& make install \
-	&& { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
-	&& make clean \
-    && cd /usr/src/php/ext \
+     && make -j4 \
+     && make install \
+     && { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
+     && make clean \
+     && cd /usr/src/php/ext \
      && git clone -b php7 https://github.com/phpredis/phpredis.git \
      && docker-php-ext-install phpredis \
      && git clone -b php7 https://github.com/php-memcached-dev/php-memcached.git \
