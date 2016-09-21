@@ -65,10 +65,10 @@ sleep 3s
 echo -en "\007"
 echo -en "\007" > /dev/console
 
-echo "Done"
+echo "Done image $IMG_NAME"
 
-read 
-set -x
+read
+#set -x
 
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
   echo "Build $IMG_NAME is OK"
