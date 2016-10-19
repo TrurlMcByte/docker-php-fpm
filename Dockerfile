@@ -29,10 +29,10 @@ ENV TIDY_VERSION=5.1.25 \
     XCACHE_VERSION=3.2.0 \
     SUHOSIN_VERSION=0.9.38 \
     PHP_INI_DIR=/usr/local/etc/php \
-    GPG_KEYS="0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3" \
-    PHP_VERSION=5.6.26 \
-    PHP_FILENAME=php-5.6.26.tar.xz \
-    PHP_SHA256=203a854f0f243cb2810d1c832bc871ff133eccdf1ff69d32846f93bc1bef58a8 \
+    GPG_KEYS="6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1" \
+    PHP_VERSION=5.6.27 \
+    PHP_FILENAME=php-$PHP_VERSION.tar.xz \
+    PHP_SHA256=16eb544498339d1d855292826e2e547ab01a31600141094959073e5e10e93ab5 \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 COPY docker-php-ext-* /usr/local/bin/
@@ -200,7 +200,7 @@ ENV MOD_XDEBUG="" \
     FPMGOPTS="" \
     FPMOPTS=""
 
-ADD etc /usr/local/etc/
+COPY etc /usr/local/etc/
 ADD docker-entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]

@@ -6,6 +6,7 @@ for f in 01 02 04 05; do
 #for f in 01 04 05 ; do
 #for f in 05 ; do
 #for f in 02 ; do
+    echo "front$f"
 #    ssh -tA root@front$f docker images
     ssh -tA root@front$f docker ps -a
 done

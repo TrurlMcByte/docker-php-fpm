@@ -4,7 +4,7 @@
 
 
 CON_NAME=phpdir5.6-fpm-goha
-IMG_NAME=trurlmcbyte/phpdir:5.6
+IMG_NAME=trurlmcbyte/php-fpm:5.6
 BINDIP=`getent hosts $HOST | awk '/10\.9\.8\./ {print $1; exit;}'`
 
 #docker stop -t 4 $CON_NAME
@@ -25,7 +25,7 @@ docker  run -it --restart=always -d \
     -e WORK_UID=`id -u wwwrun` \
     -e WORK_GID=`id -g wwwrun` \
     -e MOD_MEMCACHE='
-extension=memcache.so
+;extension=memcache.so
 memcache.allow_failover = "1"
 memcache.max_failover_attempts = "2"
 memcache.default_port = "11211"
