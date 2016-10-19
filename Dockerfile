@@ -202,6 +202,10 @@ ENV MOD_XDEBUG="" \
     FPMOPTS=""
 
 COPY etc /usr/local/etc/
-COPY docker-entrypoint.sh /entrypoint.sh
+
+COPY ./docker-entrypoint.sh /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["php-fpm"]
+
