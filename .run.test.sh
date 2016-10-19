@@ -17,8 +17,8 @@ else
     docker pull $IMG_NAME
 fi
 
-  docker stop -t 2 $CON_NAME
-  docker rm $CON_NAME
+  docker stop -t 2 $CON_NAME || true
+  docker rm $CON_NAME || true
 
 #    -p 9002:9000 \
 #    -l port.9000=php-fpm \
@@ -68,7 +68,7 @@ echo -en "\007" > /dev/console
 echo "Done image $IMG_NAME"
 
 read
-#set -x
+set +o pipefail
 
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
   echo "Build $IMG_NAME is OK"
