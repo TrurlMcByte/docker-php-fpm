@@ -122,6 +122,7 @@ RUN apk add --no-cache --virtual .build-deps \
         --enable-mbstring \
         --enable-opcache \
         --enable-shmop \
+        --enable-soap \
         --enable-sockets \
         --enable-sysvmsg \
         --enable-sysvsem \

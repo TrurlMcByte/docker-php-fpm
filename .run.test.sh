@@ -68,7 +68,7 @@ echo -en "\007" > /dev/console
 echo "Done image $IMG_NAME"
 
 read
-set +x
+set +e
 set +o pipefail
 
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
