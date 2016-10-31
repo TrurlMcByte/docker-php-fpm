@@ -112,6 +112,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 --enable-mbstring \
                 --enable-opcache \
                 --enable-shmop \
+                --enable-soap \
                 --enable-sockets \
                 --enable-sysvmsg \
                 --enable-sysvsem \
