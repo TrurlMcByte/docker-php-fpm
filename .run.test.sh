@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-CON_NAME=phpdir_phpdef-fpm-goha_1
+CON_NAME=php-fpm-main
 BUILD_MARK='PHP_VERSION'
 IMG_VER=`grep "${BUILD_MARK}=" Dockerfile | cut -d '=' -f 2 | cut -d ' ' -f 1`
 IMG_BASE_NAME="trurlmcbyte/php-fpm"
@@ -18,29 +18,41 @@ else
 fi
 
   docker stop -t 2 $CON_NAME || true
-  docker rm $CON_NAME || true
+  docker rm -f $CON_NAME || true
 
 #    -p 9002:9000 \
 #    -l port.9000=php-fpm \
 #    --net=docker-home-net \
 #    --net-alias=php-fpm \
+#    -e FPMOPTS="pm.max_children = 6\npm.max_requests=500\n" \
+#    --log-driver=syslog \
+#    --log-opt syslog-address=udp://192.168.1.11:514 \
+#    --log-opt syslog-facility=daemon \
+#    --log-opt tag="$CON_NAME" \
 
 docker run -d  --restart=always  --name $CON_NAME \
-    --log-driver=syslog \
-    --log-opt syslog-address=udp://192.168.1.11:514 \
-    --log-opt syslog-facility=daemon \
-    --log-opt tag="$CON_NAME" \
-    --net=docker-home-net \
-    --net-alias=php-fpm \
+    --log-opt max-size=10m \
+    -p 9002:9000 \
+    -l port.9000=php-fpm \
+    -p 9009:9009 \
+    -l port.9000=php-xdebug \
     -e TZ=America/Los_Angeles \
     -e ENV=home \
     -e WORK_UID=`id -u wwwrun` \
     -e WORK_GID=`id -g wwwrun` \
     -e MOD_MEMCACHE='yes' \
-    -e MOD_XDEBUG='yes' \
+    -e MOD_XDEBUG='
+xdebug.remote_enable = 1
+xdebug.remote_autostart = 1
+xdebug.remote_port=9009
+xdebug.remote_handler=dbgp
+xdebug.remote_host=192.168.1.15
+xdebug.max_nesting_level=1000
+xdebug.auto_trace=1
+xdebug.show_mem_delta=1
+' \
     -e MOD_XCACHE='yes' \
     -e FPMGOPTS='' \
-    -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/ssl/phpki-store:/etc/ssl/phpki-store \
     -v /usr/local/src/site:/usr/local/src/site:ro \
@@ -74,7 +86,7 @@ set +o pipefail
 if curl -s http://home/test.php | grep -q "PHP Version $IMG_VER"; then
   echo "Build $IMG_NAME is OK"
   test "${IMG_BASE_NAME%/*}" = "trurlmcbyte" && \
-  docker push "$IMG_NAME"
+  docker push "$IMG_NAME" && \
   for TAG in $SUBTAGS; do
     docker tag $IMG_NAME "$IMG_BASE_NAME:$TAG"
     docker push "$IMG_BASE_NAME:$TAG"

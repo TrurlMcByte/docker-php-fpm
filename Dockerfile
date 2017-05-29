@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.4
 
 # base libs
 RUN apk add --no-cache \
@@ -30,11 +30,11 @@ ENV TIDY_VERSION=5.1.25 \
     SUHOSIN_VERSION=0.9.38 \
     PHP_INI_DIR=/usr/local/etc/php \
     GPG_KEYS="6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1" \
-    PHP_VERSION=5.6.28 \
-    PHP_SHA256=07187ba2870f89cef334cd2ad6cb801aeec5eaf283da0293a9a6be75d6786d11 \
+    PHP_VERSION=5.6.30 \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
-ENV PHP_FILENAME=php-$PHP_VERSION.tar.xz
+ENV PHP_FILENAME=php-$PHP_VERSION.tar.xz \
+    PHP_SHA256_XZ=a363185c786432f75e3c7ff956b49c3369c3f6906a6b10459f8d1ddc22f70805
 
 COPY docker-php-ext-* /usr/local/bin/
 
@@ -92,7 +92,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && rm -rf /usr/local/src/tidy-html5-$TIDY_VERSION \
     && set -xe \
     && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
-    && echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
+    && echo "$PHP_SHA256_XZ *$PHP_FILENAME" | sha256sum -c - \
     && curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && for key in $GPG_KEYS; do \

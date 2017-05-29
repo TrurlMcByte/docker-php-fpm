@@ -3,21 +3,23 @@
 #for i in 1 2 3 4; do
 
 
-CON_NAME=phpdir5.6-fpm-goha
+CON_NAME=phpdir_1
 IMG_NAME=trurlmcbyte/php-fpm:5.6
 BINDIP=`getent hosts $HOST | awk '/10\.9\.8\./ {print $1; exit;}'`
 
-#docker stop -t 4 $CON_NAME
-#docker rm -f $CON_NAME
-#     --name $CON_NAME \
-#-H 10.9.8.12:3375
+docker pull $IMG_NAME
+docker stop -t 4 $CON_NAME
+docker kill $CON_NAME
+docker rm -f $CON_NAME
+
+#    --log-driver=syslog \
+#    --log-opt syslog-address=udp://10.9.8.50:514 \
+#    --log-opt syslog-facility=daemon \
+#    --log-opt tag="$CON_NAME" \
 
 docker  run -it --restart=always -d \
-    --name phpdir_1 \
-    --log-driver=syslog \
-    --log-opt syslog-address=udp://10.9.8.50:514 \
-    --log-opt syslog-facility=daemon \
-    --log-opt tag="$CON_NAME" \
+    --log-opt max-size=10m \
+    --name $CON_NAME \
     -p 9002:9000 \
     -l port.9000=php-fpm \
     -e ENV=production \
