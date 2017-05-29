@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-CON_NAME=phpdir_phpdef-fpm-goha_1
+CON_NAME=php-fpm-main
 BUILD_MARK='PHP_VERSION'
 IMG_VER=`grep "${BUILD_MARK}=" Dockerfile | cut -d '=' -f 2 | cut -d ' ' -f 1`
 IMG_BASE_NAME="trurlmcbyte/php-fpm"
@@ -24,12 +24,17 @@ fi
 #    -l port.9000=php-fpm \
 #    --net=docker-home-net \
 #    --net-alias=php-fpm \
+#    --log-driver=syslog \
+#    --log-opt syslog-address=udp://192.168.1.11:514 \
+#    --log-opt syslog-facility=daemon \
+#    --log-opt tag="$CON_NAME" \
 
 docker run -d  --restart=always  --name $CON_NAME \
-    --log-driver=syslog \
-    --log-opt syslog-address=udp://192.168.1.11:514 \
-    --log-opt syslog-facility=daemon \
-    --log-opt tag="$CON_NAME" \
+    --log-opt max-size=10m \
+    -p 9002:9000 \
+    -l port.9000=php-fpm \
+    -p 9009:9009 \
+    -l port.9009=php-xdebug \
     -e TZ=America/Los_Angeles \
     -e ENV=home \
     -e WORK_UID=`id -u wwwrun` \
