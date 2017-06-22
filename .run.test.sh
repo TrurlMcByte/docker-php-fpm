@@ -42,7 +42,7 @@ docker run -d  --restart=always  --name $CON_NAME \
     -e OPCACHE_ENABLE="yes" \
     -e MOD_MEMCACHE='yes' \
     -e MOD_XDEBUG='yes' \
-    -e MOD_XCACHE='no' \
+    -e MOD_XCACHE='yes' \
     -e FPMGOPTS='' \
     -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
