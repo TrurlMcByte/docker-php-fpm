@@ -4,7 +4,7 @@ set -e
 write_configs() {
 
     mkdir -p /data/log
-
+    mkdir -p /usr/local/etc/php/
     test -d /usr/local/etc/php-fpm.d || mkdir -p /usr/local/etc/php-fpm.d
     test -f /usr/local/etc/php-fpm.conf.default && sed 's!=NONE/!=!g' /usr/local/etc/php-fpm.conf.default | grep -v 'include=' > /usr/local/etc/php-fpm.d/www.conf
     if test -f /usr/local/etc/php-fpm.d/www.conf.default; then
@@ -15,7 +15,7 @@ write_configs() {
     curl -s -o /tmp/GeoIP.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz \
          && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/
 
-    curl -s -o /usr/local/etc/php/browscap.ini 'https://browscap.org/stream?q=Full_PHP_BrowsCapINI' 
+    curl -s -o /usr/local/etc/php/browscap.ini 'https://browscap.org/stream?q=Full_PHP_BrowsCapINI'
 
     touch /usr/local/etc/php.configured
 }
