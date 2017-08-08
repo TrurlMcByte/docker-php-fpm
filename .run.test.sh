@@ -54,6 +54,7 @@ xdebug.show_mem_delta=1
     -e MOD_XCACHE='yes' \
     -e FPMGOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
+    -v /srv/docker/php-fpm/etc/php.ini:/usr/local/etc/php/php.ini:ro \
     -v /etc/ssl/phpki-store:/etc/ssl/phpki-store \
     -v /usr/local/src/site:/usr/local/src/site:ro \
     -v /usr/local/src/app:/usr/local/src/app:ro \
