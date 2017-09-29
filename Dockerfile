@@ -19,6 +19,7 @@ RUN apk add --no-cache \
         libuuid \
         libxml2 \
         libxslt \
+        openssl \
         postgresql-client \
         xz \
         zlib
