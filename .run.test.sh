@@ -28,6 +28,16 @@ fi
 #    --log-opt syslog-address=udp://192.168.1.11:514 \
 #    --log-opt syslog-facility=daemon \
 #    --log-opt tag="$CON_NAME" \
+#    -e MOD_XDEBUG='
+#xdebug.remote_enable = 1
+#xdebug.remote_autostart = 1
+#xdebug.remote_port=9009
+#xdebug.remote_handler=dbgp
+#xdebug.remote_host=192.168.1.15
+#xdebug.max_nesting_level=1000
+#xdebug.auto_trace=1
+#xdebug.show_mem_delta=1
+#' \
 
 docker run -d  --restart=always  --name $CON_NAME \
     --log-opt max-size=10m \
@@ -39,10 +49,18 @@ docker run -d  --restart=always  --name $CON_NAME \
     -e ENV=home \
     -e WORK_UID=`id -u wwwrun` \
     -e WORK_GID=`id -g wwwrun` \
-    -e OPCACHE_ENABLE="yes" \
+    -e OPCACHE_ENABLE='yes' \
     -e MOD_MEMCACHE='yes' \
-    -e MOD_XDEBUG='yes' \
-    -e MOD_XCACHE='yes' \
+    -e MOD_XDEBUG='
+xdebug.remote_enable = 1
+xdebug.remote_autostart = 1
+xdebug.remote_port=9009
+xdebug.remote_handler=dbgp
+xdebug.remote_host=192.168.1.15
+xdebug.max_nesting_level=1000
+xdebug.auto_trace=1
+xdebug.show_mem_delta=1
+' \
     -e FPMGOPTS='' \
     -e FPMOPTS='' \
     -v /etc/timezone:/etc/timezone:ro \
