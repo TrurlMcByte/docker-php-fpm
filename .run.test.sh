@@ -41,6 +41,7 @@ fi
 
 docker run -d  --restart=always  --name $CON_NAME \
     --log-opt max-size=10m \
+    --cap-add SYS_PTRACE \
     -p 9002:9000 \
     -l port.9000=php-fpm \
     -p 9009:9009 \

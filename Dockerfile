@@ -16,17 +16,16 @@ RUN apk add --no-cache \
         curl
 
 #    XCACHE_VERSION=3.2.0 \
-#    PHPREDIS_VERSION=2.2.7 \
 #    SUHOSIN_VERSION=0.9.38 \
 
 
-ENV PHP_VERSION=7.1.10 \
+ENV PHP_VERSION=7.1.11 \
     TIDY_VERSION=5.4.0 \
     PHPREDIS_VERSION=php7-git \
     XDEBUG_VERSION=XDEBUG_2_5_5 \
     PHP_INI_DIR=/usr/local/etc/php \
     GPG_KEYS="A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0  528995BFEDFBA7191D46839EF9BA0ADA31CBD89E" \
-    PHP_SHA256=2b8efa771a2ead0bb3ae67b530ca505b5b286adc873cca9ce97a6e1d6815c50b \
+    PHP_SHA256=074093e9d7d21afedc5106904218a80a47b854abe368d2728ed22184c884893e \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 ENV PHP_FILENAME=php-$PHP_VERSION.tar.xz
@@ -52,6 +51,8 @@ RUN apk add --no-cache --virtual .phpize-deps \
         gettext-dev \
         git \
         gnupg \
+        gmp \
+        gmp-dev \
         icu-dev libgcc \
         libc-dev \
         libedit-dev \
@@ -113,6 +114,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 --enable-intl \
                 --enable-mbstring \
                 --enable-opcache \
+                --enable-pcntl \
                 --enable-shmop \
                 --enable-soap \
                 --enable-sockets \
@@ -125,10 +127,10 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 --with-freetype-dir=/usr/include/ \
                 --with-gd \
                 --with-gettext \
+                --with-gmp \
                 --with-jpeg-dir=/usr/include/ \
                 --with-libedit \
                 --with-mcrypt \
-                --with-mysql \
                 --with-mysqli \
                 --with-openssl \
                 --with-pdo-mysql \
@@ -142,14 +144,12 @@ RUN apk add --no-cache --virtual .phpize-deps \
         && make install \
     && { find /usr/local/bin /usr/local/sbin -type f -perm +0111 -exec strip --strip-all '{}' + || true; } \
     && cd /usr/src/php/ext \
-#    && curl https://codeload.github.com/phpredis/phpredis/tar.gz/$PHPREDIS_VERSION | tar -xz \
     && curl https://codeload.github.com/xdebug/xdebug/tar.gz/$XDEBUG_VERSION | tar -xz \
 #    && curl https://xcache.lighttpd.net/pub/Releases/$XCACHE_VERSION/xcache-$XCACHE_VERSION.tar.gz | tar -xz \
-#    && curl https://download.suhosin.org/suhosin-$SUHOSIN_VERSION.tar.gz | tar -xz \
+    && git clone https://github.com/sektioneins/suhosin7 \
     && git clone https://github.com/phpredis/phpredis.git \
-    && git clone -b php7 https://github.com/websupport-sk/pecl-memcache.git memcache \
-#    && pecl install geoip \
-#    && pecl install memcache \
+    && git clone -b NON_BLOCKING_IO_php7 https://github.com/websupport-sk/pecl-memcache.git memcache \
+    && pecl install geoip-beta \
 #    && pecl install rar \
     && echo | pecl install uuid \
     && docker-php-ext-configure xdebug-$XDEBUG_VERSION \
@@ -163,12 +163,11 @@ RUN apk add --no-cache --virtual .phpize-deps \
 #        --enable-xcache-disassembler \
 #        --enable-xcache-encoder \
 #        --enable-xcache-decoder \
-    && docker-php-ext-enable uuid \
-    && docker-php-ext-install memcache phpredis xdebug-$XDEBUG_VERSION \
+    && docker-php-ext-enable uuid geoip \
+    && docker-php-ext-install memcache phpredis suhosin7 xdebug-$XDEBUG_VERSION \
     && rm -rf /usr/src/php \
     && rm -rf /usr/local/src \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.saved \
-#    && mv /usr/local/etc/php/conf.d/docker-php-ext-xcache.ini /usr/local/etc/php/conf.d/docker-php-ext-xcache.ini.saved \
     && runDeps="$( \
         scanelf --needed --nobanner --recursive /usr/local \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \

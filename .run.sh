@@ -12,4 +12,4 @@ docker run -it --restart=always -d --name phpdir_phpdef-fpm-goha_1 \
     -v /srv/nfs/share:/srv/nfs/share \
     -v /home/goha:/home/goha:ro \
     -v /home/pubgoha:/home/pubgoha:ro \
-    trurlmcbyte/phpdir:5.6
+    trurlmcbyte/php-fpm:7.1
