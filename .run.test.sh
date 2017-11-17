@@ -77,6 +77,9 @@ xdebug.show_mem_delta=1
     -v /usr/share/zabbix:/usr/share/zabbix:ro \
     $IMG_NAME
 
+
+
+
 #    -e OPCACHE_ENABLE=yes \
 #    -e WORK_UID=`id -u wwwrun` \
 #    -e WORK_GID=`id -g wwwrun` \
