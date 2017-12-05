@@ -54,6 +54,8 @@ test "${MOD_MEMCACHE}" && echo "extension=memcache.so" > /usr/local/etc/php/conf
 test "${MOD_XDEBUG}" && cat /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.saved > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && test "${MOD_XDEBUG}" = "yes" || echo "${MOD_XDEBUG}" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
+#test "${MOD_MEMPROF}" && cat /usr/local/etc/php/conf.d/docker-php-ext-memprof.ini.saved > /usr/local/etc/php/conf.d/docker-php-ext-memprof.ini
+
 test "${MOD_XCACHE}" && cat /usr/local/etc/php/conf.d/docker-php-ext-xcache.ini.saved > /usr/local/etc/php/conf.d/docker-php-ext-xcache.ini \
  && test "${MOD_XCACHE}" = "yes" || echo "${MOD_XCACHE}" >> /usr/local/etc/php/conf.d/docker-php-ext-xcache.ini
 
