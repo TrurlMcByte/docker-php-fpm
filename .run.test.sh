@@ -5,7 +5,7 @@ BUILD_MARK='PHP_VERSION'
 IMG_VER=`grep "${BUILD_MARK}=" Dockerfile | cut -d '=' -f 2 | cut -d ' ' -f 1`
 IMG_BASE_NAME="trurlmcbyte/php-fpm"
 IMG_NAME="$IMG_BASE_NAME:$IMG_VER"
-SUBTAGS="7.1 7"
+SUBTAGS="7.2 7"
 
 IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~/72\.51/) { print a[2]; exit; } }'`
 
