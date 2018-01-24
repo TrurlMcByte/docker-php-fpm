@@ -9,6 +9,8 @@ SUBTAGS="7.1 7"
 
 IP=`ifconfig | awk '/^(eth|eno)[0-9]+[ \t]/ {getline; split($2,a,":"); if(a[2]!~/72\.51/) { print a[2]; exit; } }'`
 
+. ./.geoup.sh
+
 if test "${IMG_BASE_NAME%/*}" = "trurlmcbyte"; then
     set -eo pipefail
     test -f ./build.log && mv -fb ./build.log ./build.log.old

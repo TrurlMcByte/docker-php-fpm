@@ -21,6 +21,7 @@ RUN apk add --no-cache \
 
 ENV PHP_VERSION=7.1.12 \
     TIDY_VERSION=5.4.0 \
+    ICONV_VERSION=1.15 \
     PHPREDIS_VERSION=php7-git \
     XDEBUG_VERSION=XDEBUG_2_5_5 \
     PHP_INI_DIR=/usr/local/etc/php \
@@ -77,13 +78,26 @@ RUN apk add --no-cache --virtual .phpize-deps \
     && mkdir -p $PHP_INI_DIR/conf.d \
     && mkdir -p /usr/local/src \
     && cd /usr/local/src \
+#    && curl -q http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$ICONV_VERSION.tar.gz | tar -xz \
+#    && cd libiconv-$ICONV_VERSION/ \
+#    && ./configure \
+#        --prefix=/usr \
+#        --mandir=/usr/share/man \
+#        --disable-nls \
+#        --disable-static \
+#    && sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool \
+#    && sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool \
+#    && make \
+#    && make install \
+#    && rm /usr/lib/charset.alias \
+#    && cd /usr/local/src \
     && curl -q https://codeload.github.com/htacg/tidy-html5/tar.gz/$TIDY_VERSION | tar -xz \
     && cd tidy-html5-$TIDY_VERSION/build/cmake \
     && cmake ../.. && make install \
     && ln -s tidybuffio.h ../../../../include/buffio.h \
     && cd /usr/local/src \
     && rm -rf /usr/local/src/tidy-html5-$TIDY_VERSION \
-  && set -xe \
+    && set -xe \
         && curl -fSL "http://php.net/get/$PHP_FILENAME/from/this/mirror" -o "$PHP_FILENAME" \
         && echo "$PHP_SHA256 *$PHP_FILENAME" | sha256sum -c - \
         && curl -fSL "http://php.net/get/$PHP_FILENAME.asc/from/this/mirror" -o "$PHP_FILENAME.asc" \
@@ -193,5 +207,6 @@ ENV MOD_XDEBUG="" \
 
 ADD etc /usr/local/etc/
 ADD docker-entrypoint.sh /entrypoint.sh
+ADD GeoIP.dat /usr/share/GeoIP/GeoIP.dat
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
