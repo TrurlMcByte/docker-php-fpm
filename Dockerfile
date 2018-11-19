@@ -111,7 +111,9 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key"; \
         done \
         && gpg --batch --verify "$PHP_FILENAME.asc" "$PHP_FILENAME" \
-        && rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
+        && pkill -9 gpg-agent; \
+        pkill -9 dirmngr; \
+        rm -r "$GNUPGHOME" "$PHP_FILENAME.asc" \
         && mkdir -p /usr/src \
         && tar -Jxf "$PHP_FILENAME" -C /usr/src \
         && mv "/usr/src/php-$PHP_VERSION" /usr/src/php \
