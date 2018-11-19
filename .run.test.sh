@@ -79,7 +79,7 @@ xdebug.show_mem_delta=1
     -v /usr/share/zabbix:/usr/share/zabbix:ro \
     $IMG_NAME
 
-
+#docker-compose up -d
 
 
 #    -e OPCACHE_ENABLE=yes \

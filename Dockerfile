@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:latest
 
 # base libs
 RUN apk add --no-cache \
@@ -8,25 +8,26 @@ RUN apk add --no-cache \
         geoip \
         zlib freetype libpng libjpeg-turbo \
         bzip2 libbz2 \
-        openssl \
+        libressl \
         libxslt \
         icu-libs \
         libmcrypt \
         libuuid \
         curl
 
+#        openssl
+
 #    XCACHE_VERSION=3.2.0 \
 #    SUHOSIN_VERSION=0.9.38 \
 
 
-ENV PHP_VERSION=7.2.1 \
-    TIDY_VERSION=5.4.0 \
+ENV PHP_VERSION=7.2.12 \
+    TIDY_VERSION=5.6.0 \
     ICONV_VERSION=1.15 \
-    PHPREDIS_VERSION=php7-git \
-    XDEBUG_VERSION=2.6.0RC2 \
+    XDEBUG_VERSION=2.6.0 \
     PHP_INI_DIR=/usr/local/etc/php \
     GPG_KEYS="1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F" \
-    PHP_SHA256=6c6cf82fda6660ed963821eb0525214bb3547e8e29f447b9c15b2d8e6efd8822 \
+    PHP_SHA256=989c04cc879ee71a5e1131db867f3c5102f1f7565f805e2bb8bde33f93147fe1 \
     PHP_EXTRA_CONFIGURE_ARGS="--enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data"
 
 ENV PHP_FILENAME=php-$PHP_VERSION.tar.xz
@@ -34,14 +35,18 @@ ENV PHP_FILENAME=php-$PHP_VERSION.tar.xz
 
 COPY docker-php-ext-* /usr/local/bin/
 
+#        openssl-dev 
+
 RUN apk add --no-cache --virtual .phpize-deps \
         autoconf \
         automake \
         bison \
         bzip2-dev \
         ca-certificates \
+        libmaxminddb-dev \
         cmake \
         curl-dev \
+        c-client \
         file \
         flex \
         freetype-dev \
@@ -63,9 +68,9 @@ RUN apk add --no-cache --virtual .phpize-deps \
         libtool \
         libxml2-dev \
         libxslt-dev \
+        libressl-dev \
         make \
         musl-dev \
-        openssl-dev \
         pkgconf \
         postgresql-dev \
         re2c \
@@ -137,6 +142,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
                 --enable-sysvshm \
                 --enable-wddx \
                 --enable-zip \
+#                --with-imap=/usr \
                 --with-curl \
                 --with-freetype-dir=/usr/include/ \
                 --with-gd \
@@ -160,7 +166,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
     && cd /usr/src/php/ext \
     && curl https://codeload.github.com/xdebug/xdebug/tar.gz/$XDEBUG_VERSION | tar -xz \
 #    && curl https://xcache.lighttpd.net/pub/Releases/$XCACHE_VERSION/xcache-$XCACHE_VERSION.tar.gz | tar -xz \
-    && git clone https://github.com/sektioneins/suhosin7 \
+#    && git clone https://github.com/sektioneins/suhosin7 \
     && git clone https://github.com/phpredis/phpredis.git \
     && git clone -b NON_BLOCKING_IO_php7 https://github.com/websupport-sk/pecl-memcache.git memcache \
     && pecl install geoip-beta \
@@ -178,7 +184,7 @@ RUN apk add --no-cache --virtual .phpize-deps \
 #        --enable-xcache-encoder \
 #        --enable-xcache-decoder \
     && docker-php-ext-enable uuid geoip \
-    && docker-php-ext-install memcache phpredis suhosin7 xdebug-$XDEBUG_VERSION \
+    && docker-php-ext-install memcache phpredis xdebug-$XDEBUG_VERSION \
     && rm -rf /usr/src/php \
     && rm -rf /usr/local/src \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.saved \
