@@ -12,15 +12,15 @@ write_configs() {
         cp /usr/local/etc/php-fpm.d/www.conf.default /usr/local/etc/php-fpm.d/www.conf
     fi
 
-    mkdir -p /usr/share/GeoIP/
-    test -s /usr/share/GeoIP/GeoIP.dat || touch -d '100 days ago' /usr/share/GeoIP/GeoIP.dat
-    if test "$(find /usr/share/GeoIP/GeoIP.dat -mmin +12)"; then
-      echo -n "Downloading maxmind db..."
-      curl -fSL http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz -o /tmp/GeoIP.dat.gz \
-        && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/ && echo "done"
-    else
-      echo "Use exists maxmind db"
-    fi
+#    mkdir -p /usr/share/GeoIP/
+#    test -s /usr/share/GeoIP/GeoIP.dat || touch -d '100 days ago' /usr/share/GeoIP/GeoIP.dat
+#    if test "$(find /usr/share/GeoIP/GeoIP.dat -mmin +12)"; then
+#      echo -n "Downloading maxmind db..."
+#      curl -fSL http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz -o /tmp/GeoIP.dat.gz \
+#        && gunzip /tmp/GeoIP.dat.gz && mkdir -p /usr/share/GeoIP && mv /tmp/GeoIP.dat /usr/share/GeoIP/ && echo "done"
+#    else
+#      echo "Use exists maxmind db"
+#    fi
 
 
     touch /usr/local/etc/php.configured
